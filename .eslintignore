@@ -1,0 +1,8 @@
+/build/
+/config/
+/dist/
+/static/
+/public/
+/node_modules/
+*/*/iconFont/
+*.d.ts

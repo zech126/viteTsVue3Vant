@@ -1,0 +1,73 @@
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+ul,
+li {
+  list-style: none none outside;
+}
+
+table,
+td,
+th {
+  border-collapse: collapse;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+body {
+  height: 100%;
+  font-size: @font-size !important;
+  color: @font-corlor;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  #app {
+    height: 100%;
+    width: 100%;
+    // font-size: @font-size;
+    // overflow: hidden;
+  }
+  .app-container{
+    height: 100%;
+  }
+}
+
