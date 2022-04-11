@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from "@vitejs/plugin-vue-jsx"; // 用于支持 vueJsx 文件打包
+import vueJsx from '@vitejs/plugin-vue-jsx'; // 用于支持 vueJsx 文件打包
 import viteCompression from 'vite-plugin-compression'; // 用于支持压缩代表， 即生成 gzip 文件
 import styleImport, { VantResolve } from 'vite-plugin-style-import'; // 自动按需引入 Vant 组件
-import postCssPxToRem from "postcss-pxtorem"
+import postCssPxToRem from 'postcss-pxtorem';
 
 const path = require('path');
 // 输出目录
@@ -31,6 +31,10 @@ export default defineConfig({
   logLevel: "info",
   // 设为false 可以避免 vite 清屏而错过在终端中打印某些关键信息
   // clearScreen:true,
+  // 用于加载 env 文件的目录。可以是一个绝对路径，也可以是相对于项目根的路径。默认 root
+  envDir: './evnConfig/',
+  // 自定义 env 变量的前缀
+  // envPrefix: [],
   // 配置文件别名
   resolve: {
     // 忽略文件导入后缀名称（设置之将覆盖默认设置，建议使用默认）
@@ -62,9 +66,13 @@ export default defineConfig({
       },
       // 输出
       output: {
+        // 用于命名代码拆分时创建的共享块的输出命名
         chunkFileNames: `${assetsName}/js/[name]-[hash].js`,
+        // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
         entryFileNames: `${assetsName}/js/[name]-[hash].js`,
+        // 用于输出静态资源的命名，[ext]表示文件扩展名
         assetFileNames: `${assetsName}/[name]-[hash].[ext]`,
+        // 拆分依赖包
         manualChunks(directory) {
           if (directory.includes('node_modules')) {
             return directory.toString().split('node_modules/')[1].split('/')[0].toString();
@@ -120,17 +128,42 @@ export default defineConfig({
     // exclude:['your-package-name'] //排除在优化之外
   },
   css: {
-    // 配置 css modules 的行为
-    modules: {},
-    // postCss 配置（注意：该配置不能转换行内样式）
+    // 在开发过程中是否启用 sourcemap。
+    // devSourcemap: true,
+    // 配置 css modules 的行为, 需要安装 postcss-modules 依赖
+    modules: {
+      // generateScopedName: function (name, filename, css) {
+      //   const i = css.indexOf(`.${name}`);
+      //   const line = css.substring(0, i).split(/[\r\n]/).length;
+      //   const file = path.basename(filename, ".css");
+      //   return `${file}_${line}_${name}`;
+      // }
+    },
+    // postCss 配置
     postcss: {
       plugins: [
+        // 前缀追加
+        require('autoprefixer')({
+          overrideBrowserslist: [
+            'Android 4.1',
+            'iOS 7.1',
+            'Chrome > 31',
+            'ff > 31',
+            'ie >= 8',
+            '> 1%',
+            // 所有主流浏览器最近10版本用
+            'last 10 versions',
+          ],
+          grid: true,
+        }),
         postCssPxToRem({
           // 1rem的大小
           rootValue: 37.5,
           // rootValue({ file }) { // 当设计稿的尺寸不是 375，而是 750 或其他大小时
           //   return file.indexOf('vant') !== -1 ? 37.5 : 75;
           // },
+          // 转rem精确到小数点多少位
+          unitPrecision: 8,
           // 需要进行转换的css属性的值，可以使用通配符。如：*意思是将全部属性单位都进行转换；
           propList: ['*'],
           // 不进行单位转换的选择器。如设置为字符串body，则所有含有body字符串的选择器都不会被该插件进行转换；若设置为[/^body$/]，则body会被匹配到而不是.body
@@ -138,7 +171,9 @@ export default defineConfig({
           // 不需要进行单位转换的文件
           exclud: [],
           // 是否允许像素在媒体查询中进行转换
-          mediaQuery: true
+          mediaQuery: true,
+          // 小于指定数值的px不转换
+          minPixelValue: 0
         })
       ]
     },
@@ -157,7 +192,7 @@ export default defineConfig({
     //若设置为 true 导入的json会被转为 export default JSON.parse("..") 会比转译成对象字面量性能更好
     stringify: false
   },
-   //继承自 esbuild 转换选项，最常见的用例是自定义 JSX
+   //继承自 esbuild 转换选项，最常见的用例是自定义 JSX/TSX
   esbuild: {
     jsxFactory: "h",
     jsxFragment: "Fragment",

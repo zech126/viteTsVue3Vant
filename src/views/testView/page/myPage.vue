@@ -1,16 +1,17 @@
 <template>
-  <div style="padding: 10px;">
-    <div style="margin-top: 10px;">
+  <div class="conent">
+    <div class="conent-row">
       JSX 组件：
       <component1 :canshu="data.canshu" />
       <component2 :canshu="data.canshu1" />
     </div>
-    <div style="margin-top: 10px;">
+    <div class="conent-row">
       <van-button type="primary" size="small" round>我是按钮</van-button>
     </div>
-    <div style="margin-top: 10px;">
+    <div class="conent-row">
       <van-field v-model="data.userName" label="用户名" placeholder="请输入用户名" />
     </div>
+    <div class="ceshi">测试</div>
   </div>
 </template>
 
@@ -29,3 +30,16 @@ const data = reactive({
 
 onMounted(() => {});
 </script>
+<style lang="less" scoped>
+.conent{
+  padding: 10px;
+  .conent-row{
+    margin-top: 10px;
+  }
+  .ceshi{
+    &:before{
+      content: '123';
+    }
+  }
+}
+</style>

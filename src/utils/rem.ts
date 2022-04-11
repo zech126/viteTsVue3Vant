@@ -1,6 +1,6 @@
 // 自定义设置, 此次设置需要和 vite.coonfig.js 中的 rootValue 的值一致
 const rootValue = 37.5;
-// 最大倍数
+// 缩放最大倍数, 默认最小为1(该处缩放倍数建议与 index.html 设置的一致)
 const amplification = 2;
 // 设置 rem 函数
 const setRem = () => {
