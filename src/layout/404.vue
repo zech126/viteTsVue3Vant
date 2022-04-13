@@ -42,7 +42,7 @@ const goToPageHome = () => {
   }
   .back-button{
     margin-top: 20px;
-    /deep/.van-button{
+    :deep(.van-button){
       width: 100%;
     }
   }

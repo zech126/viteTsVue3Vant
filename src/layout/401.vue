@@ -49,7 +49,7 @@ const loginOut = () => {
   .back-button{
     display: flex;
     margin-top: 20px;
-    /deep/.van-button{
+    :deep(.van-button){
       flex: 50;
       margin: 0 10px;
     }
