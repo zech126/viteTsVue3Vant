@@ -1,6 +1,9 @@
 import { createApp } from 'vue'
-import 'amfe-flexible'; // 设置根元素大小, 用于 px 转换 rem (该设置会将 body 元素设置为 30px, 并非 rem 单位)
-// import "@/utils/rem"; // 自定义设置根元素大小, 用于 px 转换 rem
+/* 
+  自定义设置根元素大小, 用于 px 转换 rem (如果页面始终需要竖屏、横屏)
+  也可以安装 amfe-flexible 进行处理，amfe-flexible 不支持始终横竖屏显示设置
+*/
+import initRem from "@/utils/rem";
 import App from './App.vue'
 import "@/assets/style/index.less";
 import "@/utils/loadIconFont"; // 字体全部引入
@@ -14,6 +17,8 @@ import customComponents from './components/index'; // 全局组件注册
 import * as vant from 'vant'; // 全局引入 vant 也可以注释, 使用按需引入
 import 'vant/lib/index.css'; // vant 样式全局引入
 // console.log(import.meta.env);
+// 设置页面始终横屏(cross)、竖屏(vertical)、自动(auto)
+initRem('auto');
 
 const app = createApp(App);
 // 全局注册 vant 也可以注释, 按需引入

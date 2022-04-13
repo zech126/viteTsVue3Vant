@@ -20,14 +20,25 @@ const router = createRouter({
     ...pageRouter,
   ],
 });
-
+const tool = {
+  // 获取所有路由地址
+  getRoutersPath: (arr:any, newRoute:Array<string | number> = []) => {
+    arr.forEach((item:any) => {
+      newRoute.push(item.path);
+      !common.isEmpty(item.children) && tool.getRoutersPath(item.children, newRoute)
+    })
+    return newRoute;
+  }
+}
 // 路由跳转前
 router.beforeEach((to, from, next) => {
   // 路由加载状态
   store.commit('routerModel/routerLoading', true);
   NProgress.start();
+  const routePath = tool.getRoutersPath(pageRouter);
   // 不需要验证登录状态
   if (common.isEmpty(to.meta) || to.meta && typeof to.meta.requireAuth === 'boolean' && !to.meta.requireAuth) {
+    store.commit('layout/nonExist', !routePath.includes(to.path));
     next();
     return;
   }
