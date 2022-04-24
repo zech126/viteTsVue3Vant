@@ -4,6 +4,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'; // 用于支持 vueJsx 文件打包
 import viteCompression from 'vite-plugin-compression'; // 用于支持压缩代表， 即生成 gzip 文件
 import styleImport, { VantResolve } from 'vite-plugin-style-import'; // 自动按需引入 Vant 组件
 import postCssPxToRem from 'postcss-pxtorem';
+import viteImagemin from "vite-plugin-imagemin"; // 用于图片压缩
 
 const path = require('path');
 // 输出目录
@@ -23,6 +24,38 @@ export default defineConfig({
         }
       ],
       resolves: [VantResolve()],
+    }),
+    viteImagemin({
+      // gif 压缩
+      gifsicle: {
+        optimizationLevel: 7,
+        interlaced: false
+      },
+      // jpg 压缩
+      mozjpeg: {
+        quality: 20
+      },
+      // png 压缩
+      optipng: {
+        optimizationLevel: 7
+      },
+      // png 压缩
+      pngquant: {
+        quality: [0.8, 0.9],
+        speed: 4
+      },
+      // svg 压缩优化
+      // svgo: {
+      //   plugins: [
+      //     {
+      //       name: "removeViewBox"
+      //     },
+      //     {
+      //       name: "removeEmptyAttrs",
+      //       active: false
+      //     }
+      //   ]
+      // }
     })
   ],
   root: process.cwd(),
