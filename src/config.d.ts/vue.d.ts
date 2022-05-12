@@ -34,10 +34,10 @@ declare module 'axios' {
 }
 // 环境变量
 interface ImportMetaEnv {
-  VITE_CONFIG: string,
-  VITE_SYSTEMCODE: string
-  VITE_AUTH: string,
-  VITE_BASEURL: string
+  VITE_CONFIG?: string,
+  VITE_SYSTEMCODE?: string
+  VITE_AUTH?: string,
+  VITE_BASEURL?: string
 }
 
 declare module '*.svg';

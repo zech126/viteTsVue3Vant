@@ -4,7 +4,7 @@ import NProgress from 'nprogress';
 import store from '@/store';
 import navListConfig from '@/layout/navListConfig'
 
-const process:ImportMetaEnv = import.meta.env;
+const process:any = import.meta.env;
 
 const AUTHUrl = window.location.origin.includes('172.20.200.14') ? process.VITE_AUTH.replace('dyt.pms.com.cn', '172.20.200.14') : process.VITE_AUTH;
 const tool = {
@@ -75,10 +75,14 @@ const tool = {
             document.body.appendChild(iframe);
             // 页面加载后向目标页面发送数据
             iframe.onload = (e:any) => {
-              iframe.contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
+              setTimeout(() => {
+                iframe.contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
+              }, 200)
             }
           } else {
-            oldIframe.contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
+            setTimeout(() => {
+              oldIframe.contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
+            }, 200)
           }
         }).catch(() => {
           store.commit('routerModel/routerLoading', false);
