@@ -1,13 +1,14 @@
 import common from '@/utils/common';
 import cookieConfig from '@/utils/cookieConfig';
 import NProgress from 'nprogress';
+import { ElMessageBox, ElMessage  } from 'element-plus';
 import store from '@/store';
 import navListConfig from '@/layout/navListConfig'
 
-const process:any = import.meta.env;
+const process:ImportMetaEnv = import.meta.env;
 
 const AUTHUrl = window.location.origin.includes('172.20.200.14') ? process.VITE_AUTH.replace('dyt.pms.com.cn', '172.20.200.14') : process.VITE_AUTH;
-const tool = {
+const tool:any = {
   targetPage: '/index.html#/messageHand', // 获取数据页
   // targetPage: '/index.html#/recordPages', // 获取数据页
   againLoginPage: '/index.html#/againLogin', // 重新登录页
@@ -21,6 +22,20 @@ const tool = {
   recordUrl: `${window.location.protocol}//${AUTHUrl}`, // 对应认证中心地址
   systemCode: process.VITE_SYSTEMCODE, // 系统代码
   messageKey: 'recordInfo',  // 通讯 key
+  connection: 'connectionAuth', // 连接认证中心 KEY
+  isConnection: false,
+  openFail: () => {
+    ElMessageBox.confirm('获取认证中心信息失败，无法打开当前系统，是否前往认证中心？', "提示", {
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+      buttonSize: 'default'
+    }).then(() => {
+      certification.goToLogin();
+    }).catch(() => {})
+  },
   postMessageHand(config:any = {}) {
     if ((!config.type || !config.src) && !config.remove) {
       console.error(`参数格式错误, 请参考:
@@ -61,52 +76,47 @@ const tool = {
           tool.clearPassTime = null;
         }
         hand.isloadSuccess().then(res => {
-          const oldIframe:any = document.querySelector(`#iframe${tool.messageKey}`);
-          // oldIframe && oldIframe.remove();
+          let oldIframe:any = document.querySelector(`#iframe${tool.messageKey}`);
           // 绑定方法
-          window.addEventListener('message', hand[`function${key}`]);
-          // console.log('createIframe: ', key, oldIframe)
+          window.addEventListener('message', hand[`resources${key}`]);
           if (!oldIframe) {
+            // 监听是否连接上认证中心
+            window.addEventListener('message', hand[`auth${tool.messageKey}`]);
             // 创建 iframe 指向 认证中心
-            let iframe:any = document.createElement('iframe');
-            iframe.id = `iframe${tool.messageKey}`;
-            iframe.src = `${config.src}?iframe=iframe&targetEnv=${tool.targetEnv}`;
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            // 页面加载后向目标页面发送数据
-            iframe.onload = (e:any) => {
-              setTimeout(() => {
-                iframe.contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
-              }, 200)
-            }
+            tool[`iframe${key}`] = document.createElement('iframe');
+            tool[`iframe${key}`].id = `iframe${tool.messageKey}`;
+            tool[`iframe${key}`].src = `${config.src}?iframe=iframe&targetEnv=${tool.targetEnv}`;
+            tool[`iframe${key}`].style.display = 'none';
+            document.body.appendChild(tool[`iframe${key}`]);
           } else {
-            setTimeout(() => {
-              oldIframe.contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
-            }, 200)
+            oldIframe.contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
           }
         }).catch(() => {
           store.commit('routerModel/routerLoading', false);
           NProgress.done();
-          // ElMessageBox.confirm('获取认证中心信息失败，无法打开当前系统，是否前往认证中心？', "提示", {
-          //   closeOnClickModal: false,
-          //   closeOnPressEscape: false,
-          //   confirmButtonText: '确定',
-          //   cancelButtonText: '取消',
-          //   type: 'warning',
-          //   buttonSize: 'default'
-          // }).then(() => {
-          //   certification.goToLogin();
-          // }).catch(() => {})
+          tool.openFail();
         })
       },
-      [`function${key}`]: (e:any) => {
+      // 接收认证中心加载完成信息
+      [`auth${tool.messageKey}`]: (e:any) => {
+        if (typeof e.data[`${tool.messageKey}${tool.connection}`] === 'undefined') return;
+        // 解除绑定
+        window.removeEventListener('message', hand[`auth${tool.messageKey}`]);
+        if (typeof e.data[`${tool.messageKey}${tool.connection}`] === 'boolean' && e.data[`${tool.messageKey}${tool.connection}`]) {
+          tool[`iframe${key}`].contentWindow.postMessage({ [`${key}`]: { ...config.data, type: config.type } }, '*');
+        } else {
+          tool.openFail();
+        }
+      },
+      // 认证中心返回值
+      [`resources${key}`]: (e:any) => {
         if (typeof e.data[`${key}`] === 'undefined') return;
         // 解除绑定
         typeof config.responseHand === 'function' && config.responseHand(e.data[`${key}`]);
       },
       removeEvent: () => {
         // 解除绑定
-        window.removeEventListener('message', hand[`function${key}`]);
+        window.removeEventListener('message', hand[`resources${key}`]);
       }
     }
     // 执行处理
@@ -119,14 +129,14 @@ const tool = {
       className.push('again-login-body');
       body.className =  className.join(' ');
     }
-    // ElMessageBox.alert(config.content, config.title, {
-    //   customClass: `${config.calssName ? `${config.calssName} again-login-message` : 'again-login-message'}`,
-    //   dangerouslyUseHTMLString: true,
-    //   closeOnClickModal: false,
-    //   closeOnPressEscape: false,
-    //   buttonSize: 'default',
-    //   showConfirmButton: false
-    // })
+    ElMessageBox.alert(config.content, config.title, {
+      customClass: `${config.calssName ? `${config.calssName} again-login-message` : 'again-login-message'}`,
+      dangerouslyUseHTMLString: true,
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      buttonSize: 'default',
+      showConfirmButton: false
+    })
   },
   removeModal: () => {
     setTimeout(() => {
@@ -306,16 +316,16 @@ const certification = {
   // 退出登录
   outSystemLogin (config:any = {}) {
     return new Promise(resolve => {
-      // ElMessageBox.confirm(config.tips || '退出认证中心，已打开的系统将受到影响，是否确认退出？', "提示", {
-      //   closeOnClickModal: false,
-      //   closeOnPressEscape: false,
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning',
-      //   buttonSize: 'default'
-      // }).then(() => {
-        const content = `<div style="padding: 10px 30px; line-height: 1.2em;">
-          <i class="el-icon-loading" style="margin-right:10px; font-size: 24px; color: #2d8cf0;vertical-align: middle;"></i>
+      ElMessageBox.confirm(config.tips || '退出认证中心，已打开的系统将受到影响，是否确认退出？', "提示", {
+        closeOnClickModal: false,
+        closeOnPressEscape: false,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        buttonSize: 'default'
+      }).then(() => {
+        const content = `<div style="padding: 10px 30px 10px 15px; line-height: 1.2em;">
+          <i class="lapa icon-loading" style="margin-right:10px; font-size: 24px; color: #2d8cf0;vertical-align: middle;"></i>
           <span style="vertical-align: middle;">正在退出系统...</span>
         </div>`;
         tool.addModal({ content: content, title: '' });
@@ -340,11 +350,11 @@ const certification = {
                 setTimeout(() => {
                   tool.removeModal();
                   if (!res) {
-                    // ElMessage({ message: '退出系统失败，请重新操作!', type: 'error' });
+                    ElMessage({ message: '退出系统失败，请重新操作!', type: 'error' });
                   } else {
                   // 移除 cookie
                     common.delCookie([cookieConfig.tokenName]);
-                    // ElMessage({ message: '成功退出系统', type: 'success' });
+                    ElMessage({ message: '成功退出系统', type: 'success' });
                     // 返回登录页面
                     setTimeout(() => {
                       certification.goToLogin(typeof type === 'boolean' ? type : true);
@@ -355,7 +365,7 @@ const certification = {
             });
           }
         })
-      // }).catch(() => {})
+      }).catch(() => {})
     })
   },
   // 进行 cookie 处理
@@ -473,6 +483,7 @@ const certification = {
         }
       })
     })
-  }
+  },
+  // message: ElMessage
 }
 export default certification;
