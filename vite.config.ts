@@ -193,10 +193,10 @@ export default defineConfig(({command, mode}) => {
       //指定传递给 css 预处理器的选项
       preprocessorOptions: {
         // less 全局变量
-        less: {
-          javascriptEnabled: true,
-          additionalData: `@import "${path.resolve(__dirname, 'src/assets/style/variable.less')}";`
-        }
+        // less: {
+        //   javascriptEnabled: true,
+        //   additionalData: `@import "${path.resolve(__dirname, 'src/assets/style/variable.less')}";`
+        // }
       }
     },
     json: {

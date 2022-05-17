@@ -1,11 +1,11 @@
 import common from '@/utils/common';
 import cookieConfig from '@/utils/cookieConfig';
 import NProgress from 'nprogress';
-import { ElMessageBox, ElMessage  } from 'element-plus';
+import { Dialog, Notify } from 'vant';
 import store from '@/store';
 import navListConfig from '@/layout/navListConfig'
 
-const process:ImportMetaEnv = import.meta.env;
+const process:any = import.meta.env;
 
 const AUTHUrl = window.location.origin.includes('172.20.200.14') ? process.VITE_AUTH.replace('dyt.pms.com.cn', '172.20.200.14') : process.VITE_AUTH;
 const tool:any = {
@@ -25,13 +25,9 @@ const tool:any = {
   connection: 'connectionAuth', // 连接认证中心 KEY
   isConnection: false,
   openFail: () => {
-    ElMessageBox.confirm('获取认证中心信息失败，无法打开当前系统，是否前往认证中心？', "提示", {
-      closeOnClickModal: false,
-      closeOnPressEscape: false,
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-      buttonSize: 'default'
+    Dialog.confirm({
+      title: '提示',
+      message: '获取认证中心信息失败，无法打开当前系统，是否前往认证中心？'
     }).then(() => {
       certification.goToLogin();
     }).catch(() => {})
@@ -129,14 +125,12 @@ const tool:any = {
       className.push('again-login-body');
       body.className =  className.join(' ');
     }
-    ElMessageBox.alert(config.content, config.title, {
-      customClass: `${config.calssName ? `${config.calssName} again-login-message` : 'again-login-message'}`,
-      dangerouslyUseHTMLString: true,
-      closeOnClickModal: false,
-      closeOnPressEscape: false,
-      buttonSize: 'default',
-      showConfirmButton: false
-    })
+    Dialog.alert({
+      title: config.title,
+      message: config.content,
+    }).then(() => {
+      certification.goToLogin();
+    }).catch(() => {})
   },
   removeModal: () => {
     setTimeout(() => {
@@ -316,13 +310,9 @@ const certification = {
   // 退出登录
   outSystemLogin (config:any = {}) {
     return new Promise(resolve => {
-      ElMessageBox.confirm(config.tips || '退出认证中心，已打开的系统将受到影响，是否确认退出？', "提示", {
-        closeOnClickModal: false,
-        closeOnPressEscape: false,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        buttonSize: 'default'
+      Dialog.confirm({
+        title: '提示',
+        message: config.tips || '退出认证中心，已打开的系统将受到影响，是否确认退出？'
       }).then(() => {
         const content = `<div style="padding: 10px 30px 10px 15px; line-height: 1.2em;">
           <i class="lapa icon-loading" style="margin-right:10px; font-size: 24px; color: #2d8cf0;vertical-align: middle;"></i>
@@ -350,11 +340,11 @@ const certification = {
                 setTimeout(() => {
                   tool.removeModal();
                   if (!res) {
-                    ElMessage({ message: '退出系统失败，请重新操作!', type: 'error' });
+                    Notify({ message: '退出系统失败，请重新操作!', type: 'danger' });
                   } else {
                   // 移除 cookie
                     common.delCookie([cookieConfig.tokenName]);
-                    ElMessage({ message: '成功退出系统', type: 'success' });
+                    Notify({ message: '成功退出系统', type: 'success' });
                     // 返回登录页面
                     setTimeout(() => {
                       certification.goToLogin(typeof type === 'boolean' ? type : true);
@@ -483,7 +473,6 @@ const certification = {
         }
       })
     })
-  },
-  // message: ElMessage
+  }
 }
 export default certification;

@@ -13,7 +13,6 @@ const router = createRouter({
   history: createWebHashHistory(), // 使用 hash 模式
   routes: [
     {
-      name: "首页",
       path: "/",
       redirect: "test1",
     },
@@ -31,14 +30,17 @@ const tool = {
   }
 }
 // 路由跳转前
-router.beforeEach((to, from, next) => {
+router.beforeEach((to:any, from, next) => {
   // 路由加载状态
   store.commit('routerModel/routerLoading', true);
   NProgress.start();
   const routePath = tool.getRoutersPath(pageRouter);
+  // 设置标题
+  document.title = to.meta && to.meta.title ? `LAPA-${to.meta.title}` : `LAPA-${to.name || 'APP'}`;
+  // 判断路由是否存在
+  store.commit('layout/nonExist', !routePath.includes(to.path));
   // 不需要验证登录状态
   if (common.isEmpty(to.meta) || to.meta && typeof to.meta.requireAuth === 'boolean' && !to.meta.requireAuth) {
-    store.commit('layout/nonExist', !routePath.includes(to.path));
     next();
     return;
   }
