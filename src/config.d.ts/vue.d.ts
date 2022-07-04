@@ -6,17 +6,18 @@ import { AxiosInstance } from "axios";
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $http: AxiosInstance;
-    $dayjs: Function;
-    $common: any;
+    $dayjs: any;
+    $common: {[key:string]: any};
     $toast: any;
     $dialog: any;
     $notify: any;
-    api: any;
-    $api: any;
+    api: {[key:string]: any};
+    $api: {[key:string]: any};
     $refs: any;
     $attrs: any;
     $emit: any;
     $parent: any;
+    [key:string]: any;
   }
 }
 declare module '*.vue' {
@@ -30,15 +31,10 @@ declare module 'axios' {
   interface AxiosRequestConfig {
     removeEmpty?: boolean;
     hiddenError?: boolean;
+    [key:string]: any;
   }
 }
 // 环境变量
-interface ImportMetaEnv {
-  VITE_CONFIG?: string,
-  VITE_SYSTEMCODE?: string
-  VITE_AUTH?: string,
-  VITE_BASEURL?: string
-}
 
 declare module '*.svg';
 declare module '*.png';

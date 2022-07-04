@@ -27,10 +27,13 @@ instance.interceptors.request.use((config:any) => {
     config.headers = {...headersConfig, ...config.headers};
     config.baseURL = requestHand.baseHand(config.url);
     config.timeout = typeof config.timeout === 'number' && config.timeout > 1000 ? config.timeout : 1000 * 120;
-    // 移除参数中的空值
-    if(common.isEmpty(config.removeEmpty) || (common.isBoolean(config.removeEmpty) && config.removeEmpty)) {
-      config.data = !common.isEmpty(config.data) ? common.removeEmpty(config.data) : undefined;
-      config.params = !common.isEmpty(config.params) ? common.removeEmpty(config.params) : undefined;
+    // 当非 FormData 或 默认提交时对参数处理
+    if (Object.prototype.toString.call(config.data) != '[object FormData]' && Object.prototype.toString.call(config.params) != '[object FormData]') {
+      // 移除参数中的空值
+      if(common.isEmpty(config.removeEmpty) || (common.isBoolean(config.removeEmpty) && config.removeEmpty)) {
+        config.data = !common.isEmpty(config.data) ? common.removeEmpty(config.data) : undefined;
+        config.params = !common.isEmpty(config.params) ? common.removeEmpty(config.params) : undefined;
+      }
     }
     return config;
   }
