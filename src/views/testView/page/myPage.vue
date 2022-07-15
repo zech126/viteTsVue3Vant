@@ -17,16 +17,17 @@
 
 <script lang="ts" setup>
 import { reactive, onMounted } from 'vue';
-// import getProxy from "@/utils/proxy";
+import getGlobal from "@/utils/global";
 import {component1, component2} from './test';
 
-// const proxy:any = getProxy();
+const global = getGlobal();
 const data = reactive({
   canshu: 'component1',
   canshu1: 'component2',
   userName: ''
 })
 
+global.$common.copy(data);
 
 onMounted(() => {});
 </script>

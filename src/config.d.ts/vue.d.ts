@@ -1,13 +1,14 @@
 /// <reference types="vite/client" />
 import { AxiosInstance } from "axios";
+import type { commonClass } from "../utils/common";
 // import { Router } from 'vue-router'
 
 //全局配置（typescript使用）
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $http: AxiosInstance;
+    $common: commonClass;
     $dayjs: any;
-    $common: {[key:string]: any};
     $toast: any;
     $dialog: any;
     $notify: any;

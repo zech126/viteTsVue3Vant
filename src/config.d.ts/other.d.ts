@@ -6,3 +6,8 @@ declare interface ImportMetaEnv {
   VITE_BASEURL: string;
   [key:string]: string;
 }
+declare interface HTMLElement {
+  currentStyle: {
+    [key:string]: string;
+  }
+}
