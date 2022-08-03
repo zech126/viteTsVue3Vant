@@ -29,8 +29,8 @@ declare module '@vue/runtime-core' {
     $store: Store<any>;
     api: {[key:string]: any};
     $api: {[key:string]: any};
-    $refs: any;
-    [key:string]: any;
+    $refs: Array<any> | {[key: string]: any};
+    // [key:string]: any;
   }
 }
 declare module '*.vue' {

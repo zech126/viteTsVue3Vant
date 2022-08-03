@@ -28,7 +28,7 @@ const getGlobal = () => {
     $store: Store<any>;
     api: Readonly<{[key:string]: any}>;
     $api: Readonly<{[key:string]: any}>;
-    [key:string]:any;
+    // [key:string]:any;
   }
 }
 export default getGlobal;
