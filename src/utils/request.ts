@@ -4,7 +4,6 @@ import requestHand from './requestHand'
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import cookieConfig from '@/utils/cookieConfig';
-import record from '@/utils/certificationCenter';
 
 // axios 默认配置
 const instance = axios.create({
@@ -50,7 +49,7 @@ instance.interceptors.response.use((response: any) => {
   let newMsg = responseData.msg;
   // 状态码处理
   if (requestHand.hand[code]) {
-    return requestHand.hand[code](response, response.data, record);
+    return requestHand.hand[code](response, response.data);
   }
   // 错误处理
   if(common.isEmpty(newMsg)) {
@@ -76,7 +75,7 @@ instance.interceptors.response.use((response: any) => {
     let newMsg = responseData.msg;
     // 状态码处理
     if (requestHand.hand[code]) {
-      return requestHand.hand[code](error.response, responseData, record);
+      return requestHand.hand[code](error.response, responseData);
     }
     // 错误处理
     if(common.isEmpty(newMsg)) {
