@@ -148,7 +148,7 @@ export class commonClass {
     const urlOption = newUrl.substring(newUrl.indexOf('?') + 1);
     const urlList = urlOption.split('&');
     let urlJson:{[key:string]:string} = {};
-    const keysList = !this.isEmpty(key) ? key : this.isObject(config) && !this.isEmpty(config.keys) ? config.keys : '';
+    const keysList = !this.isEmpty(key) ? key : this.isObject(config) && !this.isEmpty(config.keys) ? config.keys : null;
     urlList.forEach(item => {
       const pos = item.indexOf('=');
       urlJson[item.substring(0, pos)] = item.substring(pos + 1);
