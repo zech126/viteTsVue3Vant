@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { ComponentInternalInstance, getCurrentInstance } from 'vue';
 import { Router, RouteLocationNormalizedLoaded } from "vue-router";
 import { Store } from "vuex";
+import type lodash from 'lodash';
 
 type apiValType = string & {readonly[key:string]: apiValType};
 type PluginFunc<T = unknown> = (option: T, c: typeof dayjs.Dayjs, d: typeof dayjs) => void;
@@ -31,6 +32,7 @@ declare module '@vue/runtime-core' {
     readonly api: apiValType;
     readonly $api: apiValType;
     readonly $refs: Array<any> | {[key: string]: any};
+    readonly lodash: typeof lodash;
     // [key:string]: any;
   }
 }

@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import $common from "$common";
 import $http from "$request";
 import $api from '$api';
+import * as lodash from 'lodash';
 import store from "@/store/index";
 import router from "@/router/index";
 import customComponents from './components/index'; // 全局组件注册
@@ -27,6 +28,7 @@ app.config.globalProperties.$dayjs = dayjs;
 // 注册全局对象
 app.config.globalProperties.$common = $common;
 app.config.globalProperties.api = $api;
+app.config.globalProperties.lodash = lodash;
 app.config.globalProperties.$http = $http;
 
 // 注册 store

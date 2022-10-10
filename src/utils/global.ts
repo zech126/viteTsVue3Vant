@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { ComponentInternalInstance, getCurrentInstance } from 'vue';
 import { Router, RouteLocationNormalizedLoaded } from "vue-router";
 import { Store } from "vuex";
+import type lodash from 'lodash';
 
 type apiValType = string & {readonly[key:string]: apiValType};
 type PluginFunc<T = unknown> = (option: T, c: typeof dayjs.Dayjs, d: typeof dayjs) => void;
@@ -29,6 +30,7 @@ const getGlobal = () => {
     readonly $store: Store<any>;
     readonly api: apiValType;
     readonly $api: apiValType;
+    readonly lodash: typeof lodash;
     // [key:string]:any;
   }
 }

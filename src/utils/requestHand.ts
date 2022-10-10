@@ -1,4 +1,4 @@
-// import common from '@/assets/scripts/common';
+import common from '@/utils/common';
 const process = import.meta.env;
 export default {
   // 匹配不同模块服务地址
@@ -28,5 +28,18 @@ export default {
   // 其他
   other: {
     unknown: '系统未知错误,请反馈给管理员'
+  },
+  // 下载文件
+  downLoadFile: (response:{[i:string]:any}) => {
+    let str = response.headers['content-disposition'];
+    if (!response || !str) return response.data;
+    // let suffix = '';
+    let fileName = '';
+    // 截取文件名和文件类型
+    if (str.lastIndexOf('.')) {
+      fileName = decodeURI(str.substring(str.indexOf('=') + 1, str.lastIndexOf('.')));
+    }
+    common.downloadFile(response.data, {name: fileName});
+    return response.data;
   }
 }
