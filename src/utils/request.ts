@@ -25,7 +25,7 @@ instance.interceptors.request.use((config:any) => {
     }
     config.headers = {...headersConfig, ...config.headers};
     config.baseURL = requestHand.baseHand(config.url);
-    config.timeout = typeof config.timeout === 'number' && config.timeout > 1000 ? config.timeout : 1000 * 120;
+    config.timeout = common.isNumber(config.timeout) && config.timeout > 1000 ? config.timeout : 1000 * 120;
     // 当非 FormData 或 默认提交时对参数处理
     if (Object.prototype.toString.call(config.data) != '[object FormData]' && Object.prototype.toString.call(config.params) != '[object FormData]') {
       // 移除参数中的空值
@@ -35,7 +35,7 @@ instance.interceptors.request.use((config:any) => {
       }
     }
     // 当下载文件时
-    if (typeof config.downLoadFile === 'boolean' && config.downLoadFile) {
+    if ((common.isBoolean(config.downLoadFile) && config.downLoadFile) || (common.isBoolean(config.isFile) && config.isFile)) {
       config.responseType = 'blob';
     }
     return config;
@@ -53,7 +53,7 @@ instance.interceptors.response.use((response: any) => {
   let newMsg = responseData.msg;
   // 状态码处理
   if (requestHand.hand[code]) {
-    if (typeof response.config.downLoadFile === 'boolean' && response.config.downLoadFile) {
+    if ((common.isBoolean(response.config.downLoadFile) && response.config.downLoadFile) || (common.isBoolean(response.config.isFile) && response.config.isFile)) {
       return requestHand.downLoadFile(response);
     }
     return requestHand.hand[code](response, response.data);
@@ -61,7 +61,7 @@ instance.interceptors.response.use((response: any) => {
   // 错误处理
   if(common.isEmpty(newMsg)) {
     if (requestHand.tipsTxt[code]) {
-      newMsg = typeof requestHand.tipsTxt[code] === 'function' ? requestHand.tipsTxt[code](response, response.data) : requestHand.tipsTxt[code];
+      newMsg = common.isFunction(requestHand.tipsTxt[code]) ? requestHand.tipsTxt[code](response, response.data) : requestHand.tipsTxt[code];
     } else {
       newMsg = requestHand.other.unknown;
     }
@@ -87,7 +87,7 @@ instance.interceptors.response.use((response: any) => {
     // 错误处理
     if(common.isEmpty(newMsg)) {
       if (requestHand.tipsTxt[code]) {
-        newMsg = typeof requestHand.tipsTxt[code] === 'function' ? requestHand.tipsTxt[code](error.response, error.response.data) : requestHand.tipsTxt[code];
+        newMsg = common.isFunction(requestHand.tipsTxt[code]) ? requestHand.tipsTxt[code](error.response, error.response.data) : requestHand.tipsTxt[code];
       } else {
         newMsg = requestHand.other.unknown;
       }
